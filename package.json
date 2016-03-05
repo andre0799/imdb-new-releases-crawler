@@ -18,6 +18,7 @@
   "homepage": "https://github.com/andre0799/node-screenshot#readme",
   "dependencies": {
     "express": "^4.13.4",
+    "forever": "^0.15.1",
     "http": "0.0.0",
     "jsdom": "^8.1.0",
     "node-fs": "^0.1.7",

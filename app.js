@@ -12,14 +12,16 @@ var url = "http://www.imdb.com/sections/dvd/?ref_=nv_tvv_dvd_6"
 
 var __dirname = 'crawler_content'
 
-var app = express()
+// var app = express()
 
 
-app.set('port', process.env.PORT || 3000);
+// app.set('port', process.env.PORT || 3000);
 
-var results = []
+var returnMovies = function(callback){
+	var results = []
 
-app.get('/', function(req, res){
+	console.log("FOrever Processs")
+
 	jsdom.env({
 	  url: url,
 	  scripts: ["http://code.jquery.com/jquery.js"],
@@ -31,13 +33,17 @@ app.get('/', function(req, res){
 	    	results.push({rating: rating, title: title})
 	    })
 
-	    res.send(results)
+	    callback(results)
 	  }
 	});
+}
 
-})
+// app.get('/', function(req, res){
+// 	returnMovies(function(results){
+// 		res.send(results)
+// 	})
+// })
 
-
-http.createServer(app).listen(app.get('port'), function(){
-  console.log("Express server listening on port " + app.get('port'));
-});
+// http.createServer(app).listen(app.get('port'), function(){
+//   console.log("Express server listening on port " + app.get('port'));
+// });
