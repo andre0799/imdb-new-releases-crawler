@@ -33,6 +33,9 @@ if(!server_started) {
 	})
 
 	app.post('/register', function(req, res){
+		console.log("===========")
+		console.log(req.body)
+		console.log("===========")
 		var chat_id = req.body.chat_id
 		console.log('funciona memo')
 		jsonfile.readFile('./users.json', function(err, obj) {
