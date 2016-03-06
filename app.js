@@ -53,6 +53,7 @@ if(!server_started) {
 	app.post('/register', function(req, res){
 		var chat_id = req.body.chat_id || -137023455
 		var score = req.body.score || 7
+		score = parseInt(score)
 
 		console.log("Called /register with chat_id="+chat_id+" score="+score)
 
