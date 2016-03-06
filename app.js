@@ -13,7 +13,7 @@ var fs = require("node-fs"),
 var url = "http://www.imdb.com/sections/dvd/?ref_=nv_tvv_dvd_6"
 
 var Firebase = require("firebase");
-var myFirebaseRef = new Firebase("https://Rqj9VPxahAVUBBo4gyAmUxcoOiTtVpwidj2q5cDB.firebaseio.com/");
+var myFirebaseRef = new Firebase("https://imdbbot.firebaseio.com/");
 
 var __dirname = 'crawler_content'
 
@@ -30,7 +30,7 @@ if(!server_started) {
 	app.get('/', function(req, res){
 		returnMovies(function(results){
 			jsonfile.readFile('./movies.json', function(err, obj) {
-				var chat_id = req.params.chat_id
+				var chat_id = req.query.chat_id
 				request.post(
 				    'https://api.telegram.org/bot180187171:AAEVe8KA1fdah9MY79NgbVgBQfcIdjBoO88/sendMessage',
 				    {form:{ chat_id: chat_id, text: obj}},
