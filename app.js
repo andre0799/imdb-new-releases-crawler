@@ -157,4 +157,6 @@ var sendMoviesWithScore =  function(chat_id, moviesCollection){
 	})
 }
 
+console.log("FOREVER START")
+
 shouldSendNewReleases()
