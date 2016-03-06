@@ -35,17 +35,22 @@ if(!server_started) {
 				console.log("=======")
 				console.log(chat_id)
 				console.log("=======")
-				request.post(
+				obj.movies.map(function(movie){
+					console.log(movie)
+					if(movie.rating<7) return
+					request.post(
 				    'https://api.telegram.org/bot180187171:AAEVe8KA1fdah9MY79NgbVgBQfcIdjBoO88/sendMessage',
-				    {form: { chat_id: chat_id, text: obj.movies.map(function(movie){
-				    	return "<b>"+movie.title+"</b>: "+movie.rating
-				    }).join('\n'), parse_mode: 'HTML'}},
+				    {form: { 
+				    	chat_id: chat_id, 
+				    	text: "<a href=\'"+movie.image+"\'>"+"@imdb"+"</a>\n<b>"+movie.title+" "+movie.year+"</b>\n"+movie.duration+" &#9733;"+movie.rating+" <a href=\'"+movie.url+"\'>"+"IMDB"+"</a>", parse_mode: 'HTML'}},
 				    function (error, response, body) {
 				        if (!error && response.statusCode == 200) {
 				            console.log(body)
 				        }
 				    }
 				);
+				})
+
 				res.send(obj)
 			})
 		})
@@ -87,7 +92,18 @@ var returnMovies = function(callback){
 	    	var crEl = window.$(this)
 	    	var rating = crEl.find(".rating-rating .value").text()
 	    	var title = crEl.find(".info b a").text()
-	    	results.push({rating: rating, title: title})
+	    	var year = crEl.find(".info b .year_type").text()
+	    	var image = crEl.find(".image img").attr("src")
+	    	var duration = crEl.find(".info .item_description span").text().replace(/["'()\.]/g,"");
+	    	var url = "http://www.imdb.com"+crEl.find(".info b a").attr("href")
+	    	results.push({
+	    		rating: rating, 
+	    		title: title, 
+	    		image: image, 
+	    		url: url,
+	    		year: year,
+	    		duration: duration
+	    	})
 	    })
 
 	    callback(results)
