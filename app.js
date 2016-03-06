@@ -141,7 +141,7 @@ var sendMoviesWithScore =  function(chat_id, moviesCollection){
 	    'https://api.telegram.org/bot180187171:AAEVe8KA1fdah9MY79NgbVgBQfcIdjBoO88/sendMessage',
 		    {form: { 
 		    	chat_id: chat_id, 
-		    	text: "<a href=\'"+movie.image+"\'>"+"@imdb"+"</a>\n<b>"+movie.title+" "+movie.year+"</b>\n"+movie.duration+" &#9733;"+movie.rating+" <a href=\'"+movie.url+"\'>"+"IMDB"+"</a>", parse_mode: 'HTML'}},
+		    	text: "<a href=\'"+movie.image+"\'>"+"New release on DVD @imdb"+"</a>\n<b>"+movie.title+" "+movie.year+"</b>\n"+movie.duration+" &#9733;"+movie.rating+" <a href=\'"+movie.url+"\'>"+"IMDB"+"</a>", parse_mode: 'HTML'}},
 		    function (error, response, body) {
 		        if (!error && response.statusCode == 200) {
 		            // console.log(body)
