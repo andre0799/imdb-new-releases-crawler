@@ -1,1 +1,1 @@
-web: forever start nodemon --exitcrash app.js
+web: nohup app.js &
