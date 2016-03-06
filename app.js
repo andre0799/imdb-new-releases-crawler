@@ -13,7 +13,9 @@ var fs = require("node-fs"),
 var url = "http://www.imdb.com/sections/dvd/?ref_=nv_tvv_dvd_6"
 
 var Firebase = require("firebase");
-var myFirebaseRef = new Firebase("https://imdbbot.firebaseio.com/");
+var ref = new Firebase("https://imdbbot.firebaseio.com/");
+var chatsRef = ref.child("chats");
+var moviesRef = ref.child("movies");
 
 var __dirname = 'crawler_content'
 
@@ -32,11 +34,7 @@ if(!server_started) {
 			jsonfile.readFile('./movies.json', function(err, obj) {
 				var chat_id = req.query.chat_id
 				if(!chat_id) chat_id = -137023455
-				console.log("=======")
-				console.log(chat_id)
-				console.log("=======")
 				obj.movies.map(function(movie){
-					console.log(movie)
 					if(movie.rating<7) return
 					request.post(
 				    'https://api.telegram.org/bot180187171:AAEVe8KA1fdah9MY79NgbVgBQfcIdjBoO88/sendMessage',
@@ -45,7 +43,7 @@ if(!server_started) {
 				    	text: "<a href=\'"+movie.image+"\'>"+"@imdb"+"</a>\n<b>"+movie.title+" "+movie.year+"</b>\n"+movie.duration+" &#9733;"+movie.rating+" <a href=\'"+movie.url+"\'>"+"IMDB"+"</a>", parse_mode: 'HTML'}},
 				    function (error, response, body) {
 				        if (!error && response.statusCode == 200) {
-				            console.log(body)
+				            // console.log(body)
 				        }
 				    }
 				);
@@ -57,13 +55,13 @@ if(!server_started) {
 	})
 
 	app.post('/register', function(req, res){
-		var chat_id = req.body.chat_id
-		if(!chat_id) chat_id = -137023455
-		jsonfile.readFile('./users.json', function(err, obj) {
-		  var users = obj.users
-		  users[chat_id] = true
-		  jsonfile.writeFile('./users.json', {updatedAt: new Date(), users: users}, function() {});
-		})
+		var chat_id = req.body.chat_id || -137023455
+		var score = req.body.score || 7
+
+		var model = {}
+		model[chat_id] = score
+		chatsRef.update(model)
+
 		res.send({status: '200', message: 'funciona memo!'})
 	})
 
@@ -79,7 +77,7 @@ setInterval(function(){
 	returnMovies(function(results){
 		jsonfile.writeFile('./movies.json', {updatedAt: new Date(), movies: results}, function() {});
 	})
-}, (1000 * 15))
+}, (1000 * 60))
 
 var returnMovies = function(callback){
 	var results = []
