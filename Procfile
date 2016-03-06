@@ -1,1 +1,1 @@
-web: nohup app.js &
+web: npm start
