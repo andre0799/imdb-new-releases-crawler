@@ -66,8 +66,7 @@ if(!server_started) {
 	server_started = true
 }
 
-
-setInterval(function(){
+var shouldSendNewReleases = function(){
 	returnMovies(function(results){
 
 		moviesRef.once('value', function(data){
@@ -79,8 +78,6 @@ setInterval(function(){
 			var newMovies = results.filter(function(movie){
 				return !_.where(moviesCollection, {url: movie.url}).length
 			})
-
-			console.log("new movies", newMovies.length, results.length)
 
 			moviesRef.update({updatedAt: new Date(), collection: results})
 
@@ -96,7 +93,13 @@ setInterval(function(){
 			})
 		})
 	})
-}, (1000 * 20))
+}
+
+shouldSendNewReleases()
+
+setInterval(function(){
+	shouldSendNewReleases()
+}, (1000 * 60 * 60 * 24))
 
 var returnMovies = function(callback){
 	var results = []
