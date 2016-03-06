@@ -67,6 +67,14 @@ if(!server_started) {
 
 setInterval(function(){
 	returnMovies(function(results){
+
+		// results.push({ rating: '9.0',
+  //   title: 'Fake Movie',
+  //   image: 'http://ia.media-imdb.com/images/M/MV5BMjQzNDE1OTM5M15BMl5BanBnXkFtZTgwMTQwMTAwNzE@._V1._SY209_CR0,0,140,209_.jpg',
+  //   url: 'http://www.imdb.com/title/tt22d5435003/',
+  //   year: '(2015)',
+  //   duration: '112 mins' })
+
 		moviesRef.once('value', function(data){
 			var moviesObj = data.val()
 			var updatedAt = moviesObj.updatedAt
@@ -81,9 +89,9 @@ setInterval(function(){
 				return !_.where(moviesCollection, {url: movie.url}).length
 			})
 
-			console.log("new movies", newMovies)
+			console.log("new movies", newMovies, results.length)
 
-			moviesRef.update({updatedAt: new Date(), collection: results})
+			// moviesRef.update({updatedAt: new Date(), collection: results})
 
 			if(!newMovies.length) return
 
