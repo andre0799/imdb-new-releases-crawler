@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/andre0799/node-screenshot#readme",
   "dependencies": {
+    "body-parser": "^1.15.0",
     "express": "^4.13.4",
     "forever": "^0.15.1",
     "http": "0.0.0",

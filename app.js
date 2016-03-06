@@ -7,7 +7,8 @@ var fs = require("node-fs"),
   		http = require('http'),
   		express = require('express'),
   		_ = require('underscore'),
-  		jsonfile = require('jsonfile');
+  		jsonfile = require('jsonfile'),
+  		bodyParser = require('body-parser');
 
 var url = "http://www.imdb.com/sections/dvd/?ref_=nv_tvv_dvd_6"
 
@@ -18,6 +19,9 @@ var server_started = false
 if(!server_started) {
 	var app = express()
 
+	app.use(bodyParser.urlencoded({ extended: false }))
+	app.use(bodyParser.json())
+
 	app.set('port', process.env.PORT || 3000);
 
 	app.get('/', function(req, res){
@@ -26,6 +30,17 @@ if(!server_started) {
 			  res.send(obj)
 			})
 		})
+	})
+
+	app.post('/register', function(req, res){
+		var chat_id = req.body.chat_id
+		console.log('funciona memo')
+		jsonfile.readFile('./users.json', function(err, obj) {
+		  var users = obj.users
+		  users[chat_id] = true
+		  jsonfile.writeFile('./users.json', {updatedAt: new Date(), users: users}, function() {});
+		})
+		res.send({status: '200', message: 'funciona memo!'})
 	})
 
 	http.createServer(app).listen(app.get('port'), function(){
