@@ -72,17 +72,32 @@ setInterval(function(){
 			var updatedAt = moviesObj.updatedAt
 			var moviesCollection = moviesObj.collection
 
-			console.log(moviesCollection.length)
+			console.log(moviesCollection)
+			console.log("=========")
+			console.log(results)
+
+			// var newMovies = moviesCollection
+			var newMovies = results.filter(function(movie){
+				return !_.where(moviesCollection, {url: movie.url}).length
+			})
+
+			console.log("new movies", newMovies)
+
+			moviesRef.update({updatedAt: new Date(), collection: results})
+
+			if(!newMovies.length) return
 
 			chatsRef.once('value', function(data) {
 				var chatsObj = data.val()
-				console.log(chatsObj)
+				for (var key in chatsObj) {
+				  if (chatsObj.hasOwnProperty(key)) {
+				    sendMoviesWithScore(key, newMovies)
+				  }
+				}
 			})
 		})
-		moviesRef.update({updatedAt: new Date(), collection: results})
-		// jsonfile.writeFile('./movies.json', {updatedAt: new Date(), collection: results}, function() {});
 	})
-}, (1000 * 10))
+}, (1000 * 20))
 
 var returnMovies = function(callback){
 	var results = []
