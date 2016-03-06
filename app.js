@@ -33,19 +33,15 @@ if(!server_started) {
 	})
 
 	app.post('/register', function(req, res){
-		console.log("===========")
-		console.log(req.body)
-		console.log("===========")
 		var chat_id = req.body.chat_id
-		console.log('funciona memo')
+		if(!chat_id) chat_id = -137023455
 		jsonfile.readFile('./users.json', function(err, obj) {
 		  var users = obj.users
 		  users[chat_id] = true
 		  jsonfile.writeFile('./users.json', {updatedAt: new Date(), users: users}, function() {});
-
 		 	request.post(
 			    'https://api.telegram.org/bot180187171:AAEVe8KA1fdah9MY79NgbVgBQfcIdjBoO88/sendMessage',
-			    { chat_id: chat_id, text: 'Your chat_id is:'+chat_id},
+			    {form:{ chat_id: chat_id, text: 'Your chat_id is:'+chat_id}},
 			    function (error, response, body) {
 			        if (!error && response.statusCode == 200) {
 			            console.log(body)
