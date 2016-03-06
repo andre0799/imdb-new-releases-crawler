@@ -36,6 +36,9 @@ if(!server_started) {
 			var moviesCollection = moviesObj.collection
 
 			var chat_id = req.query.chat_id
+
+			console.log("Called / with chat_id="+chat_id)
+
 			if(!chat_id){
 				res.send("No chat id")
 				return
@@ -50,6 +53,8 @@ if(!server_started) {
 	app.post('/register', function(req, res){
 		var chat_id = req.body.chat_id || -137023455
 		var score = req.body.score || 7
+
+		console.log("Called /register with chat_id="+chat_id+" score="+score)
 
 		var model = {}
 		model[chat_id] = score
