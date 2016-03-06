@@ -30,27 +30,18 @@ if(!server_started) {
 	app.set('port', process.env.PORT || 3000);
 
 	app.get('/', function(req, res){
-		returnMovies(function(results){
-			jsonfile.readFile('./movies.json', function(err, obj) {
-				var chat_id = req.query.chat_id
-				if(!chat_id) chat_id = -137023455
-				obj.movies.map(function(movie){
-					if(movie.rating<7) return
-					request.post(
-				    'https://api.telegram.org/bot180187171:AAEVe8KA1fdah9MY79NgbVgBQfcIdjBoO88/sendMessage',
-				    {form: { 
-				    	chat_id: chat_id, 
-				    	text: "<a href=\'"+movie.image+"\'>"+"@imdb"+"</a>\n<b>"+movie.title+" "+movie.year+"</b>\n"+movie.duration+" &#9733;"+movie.rating+" <a href=\'"+movie.url+"\'>"+"IMDB"+"</a>", parse_mode: 'HTML'}},
-				    function (error, response, body) {
-				        if (!error && response.statusCode == 200) {
-				            // console.log(body)
-				        }
-				    }
-				);
-				})
+		moviesRef.once('value', function(data){
+			var moviesObj = data.val()
+			var updatedAt = moviesObj.updatedAt
+			var moviesCollection = moviesObj.collection
 
-				res.send(obj)
-			})
+			var chat_id = req.query.chat_id
+			if(!chat_id) chat_id = -137023455
+
+			sendMoviesWithScore(chat_id, moviesCollection)
+			
+			res.send(moviesObj)
+
 		})
 	})
 
@@ -60,9 +51,10 @@ if(!server_started) {
 
 		var model = {}
 		model[chat_id] = score
-		chatsRef.update(model)
+		chatsRef.update(model, function(){
+			res.send("Registered chatId:"+chat_id)
+		})
 
-		res.send({status: '200', message: 'funciona memo!'})
 	})
 
 	http.createServer(app).listen(app.get('port'), function(){
@@ -75,9 +67,22 @@ if(!server_started) {
 
 setInterval(function(){
 	returnMovies(function(results){
-		jsonfile.writeFile('./movies.json', {updatedAt: new Date(), movies: results}, function() {});
+		moviesRef.once('value', function(data){
+			var moviesObj = data.val()
+			var updatedAt = moviesObj.updatedAt
+			var moviesCollection = moviesObj.collection
+
+			console.log(moviesCollection.length)
+
+			chatsRef.once('value', function(data) {
+				var chatsObj = data.val()
+				console.log(chatsObj)
+			})
+		})
+		moviesRef.update({updatedAt: new Date(), collection: results})
+		// jsonfile.writeFile('./movies.json', {updatedAt: new Date(), collection: results}, function() {});
 	})
-}, (1000 * 60))
+}, (1000 * 10))
 
 var returnMovies = function(callback){
 	var results = []
@@ -107,4 +112,26 @@ var returnMovies = function(callback){
 	    callback(results)
 	  }
 	});
+}
+
+var sendMoviesWithScore =  function(chat_id, moviesCollection){
+	ref.child("chats/"+chat_id).once("value", function(data){
+		var rating = data.val()
+
+		moviesCollection.map(function(movie){
+		if(movie.rating < rating) return
+		request.post(
+	    'https://api.telegram.org/bot180187171:AAEVe8KA1fdah9MY79NgbVgBQfcIdjBoO88/sendMessage',
+		    {form: { 
+		    	chat_id: chat_id, 
+		    	text: "<a href=\'"+movie.image+"\'>"+"@imdb"+"</a>\n<b>"+movie.title+" "+movie.year+"</b>\n"+movie.duration+" &#9733;"+movie.rating+" <a href=\'"+movie.url+"\'>"+"IMDB"+"</a>", parse_mode: 'HTML'}},
+		    function (error, response, body) {
+		        if (!error && response.statusCode == 200) {
+		            // console.log(body)
+		        }
+		    }
+		);
+		})
+
+	})
 }
