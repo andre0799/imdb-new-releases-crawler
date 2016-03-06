@@ -6,21 +6,44 @@ var fs = require("node-fs"),
   		request = require('request'),
   		http = require('http'),
   		express = require('express'),
-  		_ = require('underscore');
+  		_ = require('underscore'),
+  		jsonfile = require('jsonfile');
 
 var url = "http://www.imdb.com/sections/dvd/?ref_=nv_tvv_dvd_6"
 
 var __dirname = 'crawler_content'
 
-// var app = express()
+var server_started = false
+
+if(!server_started) {
+	var app = express()
+
+	app.set('port', process.env.PORT || 3000);
+
+	app.get('/', function(req, res){
+		returnMovies(function(results){
+			jsonfile.readFile('./movies.json', function(err, obj) {
+			  res.send(obj)
+			})
+		})
+	})
+
+	http.createServer(app).listen(app.get('port'), function(){
+	  console.log("Express server listening on port " + app.get('port'));
+	});
+	
+	server_started = true
+}
 
 
-// app.set('port', process.env.PORT || 3000);
+setInterval(function(){
+	returnMovies(function(results){
+		jsonfile.writeFile('./movies.json', {updatedAt: new Date(), movies: results}, function() {});
+	})
+}, (1000 * 15))
 
 var returnMovies = function(callback){
 	var results = []
-
-	console.log("FOrever Processs")
 
 	jsdom.env({
 	  url: url,
@@ -37,13 +60,3 @@ var returnMovies = function(callback){
 	  }
 	});
 }
-
-// app.get('/', function(req, res){
-// 	returnMovies(function(results){
-// 		res.send(results)
-// 	})
-// })
-
-// http.createServer(app).listen(app.get('port'), function(){
-//   console.log("Express server listening on port " + app.get('port'));
-// });
