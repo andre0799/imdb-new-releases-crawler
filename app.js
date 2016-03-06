@@ -42,6 +42,16 @@ if(!server_started) {
 		  var users = obj.users
 		  users[chat_id] = true
 		  jsonfile.writeFile('./users.json', {updatedAt: new Date(), users: users}, function() {});
+
+		 	request.post(
+			    'https://api.telegram.org/bot180187171:AAEVe8KA1fdah9MY79NgbVgBQfcIdjBoO88/sendMessage',
+			    { chat_id: chat_id, text: 'Your chat_id is:'+chat_id},
+			    function (error, response, body) {
+			        if (!error && response.statusCode == 200) {
+			            console.log(body)
+			        }
+			    }
+			);
 		})
 		res.send({status: '200', message: 'funciona memo!'})
 	})
