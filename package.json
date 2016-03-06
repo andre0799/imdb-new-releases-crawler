@@ -25,6 +25,7 @@
     "jsdom": "^8.1.0",
     "jsonfile": "^2.2.3",
     "node-fs": "^0.1.7",
+    "nodemon": "^1.9.1",
     "path": "^0.12.7",
     "request": "^2.69.0",
     "simplecrawler": "^0.6.2",
