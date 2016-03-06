@@ -66,37 +66,6 @@ if(!server_started) {
 	server_started = true
 }
 
-var shouldSendNewReleases = function(){
-	returnMovies(function(results){
-
-		moviesRef.once('value', function(data){
-			var moviesObj = data.val()
-			var updatedAt = moviesObj.updatedAt
-			var moviesCollection = moviesObj.collection
-
-			// var newMovies = moviesCollection
-			var newMovies = results.filter(function(movie){
-				return !_.where(moviesCollection, {url: movie.url}).length
-			})
-
-			moviesRef.update({updatedAt: new Date(), collection: results})
-
-			if(!newMovies.length) return
-
-			chatsRef.once('value', function(data) {
-				var chatsObj = data.val()
-				for (var key in chatsObj) {
-				  if (chatsObj.hasOwnProperty(key)) {
-				    sendMoviesWithScore(key, newMovies)
-				  }
-				}
-			})
-		})
-	})
-}
-
-shouldSendNewReleases()
-
 setInterval(function(){
 	shouldSendNewReleases()
 }, (1000 * 60 * 60 * 24))
@@ -131,6 +100,35 @@ var returnMovies = function(callback){
 	});
 }
 
+var shouldSendNewReleases = function(){
+	returnMovies(function(results){
+
+		moviesRef.once('value', function(data){
+			var moviesObj = data.val()
+			var updatedAt = moviesObj.updatedAt
+			var moviesCollection = moviesObj.collection
+
+			// var newMovies = moviesCollection
+			var newMovies = results.filter(function(movie){
+				return !_.where(moviesCollection, {url: movie.url}).length
+			})
+
+			moviesRef.update({updatedAt: new Date(), collection: results})
+
+			if(!newMovies.length) return
+
+			chatsRef.once('value', function(data) {
+				var chatsObj = data.val()
+				for (var key in chatsObj) {
+				  if (chatsObj.hasOwnProperty(key)) {
+				    sendMoviesWithScore(key, newMovies)
+				  }
+				}
+			})
+		})
+	})
+}
+
 var sendMoviesWithScore =  function(chat_id, moviesCollection){
 	ref.child("chats/"+chat_id).once("value", function(data){
 		var rating = data.val()
@@ -152,3 +150,5 @@ var sendMoviesWithScore =  function(chat_id, moviesCollection){
 
 	})
 }
+
+shouldSendNewReleases()
