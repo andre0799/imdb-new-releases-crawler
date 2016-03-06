@@ -51,7 +51,7 @@ if(!server_started) {
 	})
 
 	app.post('/register', function(req, res){
-		var chat_id = req.body.chat_id || -137023455
+		var chat_id = req.body.chat_id
 		var score = req.body.score || 7
 		score = parseInt(score)
 
@@ -61,6 +61,17 @@ if(!server_started) {
 		model[chat_id] = score
 		chatsRef.update(model, function(){
 			res.send("Registered chatId:"+chat_id)
+		})
+
+	})
+
+	app.post('/unregister', function(req, res){
+		var chat_id = req.body.chat_id
+
+		console.log("Called /unregister with chat_id="+chat_id)
+
+		chatsRef.child(chat_id).remove(function(){
+			res.send("Unregistered chatId:"+chat_id)
 		})
 
 	})
