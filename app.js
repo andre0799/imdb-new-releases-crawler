@@ -31,9 +31,15 @@ if(!server_started) {
 		returnMovies(function(results){
 			jsonfile.readFile('./movies.json', function(err, obj) {
 				var chat_id = req.query.chat_id
+				if(!chat_id) chat_id = -137023455
+				console.log("=======")
+				console.log(chat_id)
+				console.log("=======")
 				request.post(
 				    'https://api.telegram.org/bot180187171:AAEVe8KA1fdah9MY79NgbVgBQfcIdjBoO88/sendMessage',
-				    {form:{ chat_id: chat_id, text: obj}},
+				    {form: { chat_id: chat_id, text: obj.movies.map(function(movie){
+				    	return "<b>"+movie.title+"</b>: "+movie.rating
+				    }).join('\n'), parse_mode: 'HTML'}},
 				    function (error, response, body) {
 				        if (!error && response.statusCode == 200) {
 				            console.log(body)
