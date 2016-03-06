@@ -12,6 +12,9 @@ var fs = require("node-fs"),
 
 var url = "http://www.imdb.com/sections/dvd/?ref_=nv_tvv_dvd_6"
 
+var Firebase = require("firebase");
+var myFirebaseRef = new Firebase("https://Rqj9VPxahAVUBBo4gyAmUxcoOiTtVpwidj2q5cDB.firebaseio.com/");
+
 var __dirname = 'crawler_content'
 
 var server_started = false
@@ -27,7 +30,17 @@ if(!server_started) {
 	app.get('/', function(req, res){
 		returnMovies(function(results){
 			jsonfile.readFile('./movies.json', function(err, obj) {
-			  res.send(obj)
+				var chat_id = req.params.chat_id
+				request.post(
+				    'https://api.telegram.org/bot180187171:AAEVe8KA1fdah9MY79NgbVgBQfcIdjBoO88/sendMessage',
+				    {form:{ chat_id: chat_id, text: obj}},
+				    function (error, response, body) {
+				        if (!error && response.statusCode == 200) {
+				            console.log(body)
+				        }
+				    }
+				);
+				res.send(obj)
 			})
 		})
 	})
@@ -39,15 +52,6 @@ if(!server_started) {
 		  var users = obj.users
 		  users[chat_id] = true
 		  jsonfile.writeFile('./users.json', {updatedAt: new Date(), users: users}, function() {});
-		 	request.post(
-			    'https://api.telegram.org/bot180187171:AAEVe8KA1fdah9MY79NgbVgBQfcIdjBoO88/sendMessage',
-			    {form:{ chat_id: chat_id, text: 'Your chat_id is:'+chat_id}},
-			    function (error, response, body) {
-			        if (!error && response.statusCode == 200) {
-			            console.log(body)
-			        }
-			    }
-			);
 		})
 		res.send({status: '200', message: 'funciona memo!'})
 	})
