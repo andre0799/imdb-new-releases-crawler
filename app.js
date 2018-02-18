@@ -19,6 +19,7 @@ var moviesRef = ref.child("movies");
 
 var __dirname = 'crawler_content'
 
+
 var server_started = false
 
 if(!server_started) {
@@ -45,7 +46,7 @@ if(!server_started) {
 			}
 
 			sendMoviesWithScore(chat_id, moviesCollection)
-			
+
 			res.send(moviesObj)
 		})
 	})
@@ -79,7 +80,7 @@ if(!server_started) {
 	http.createServer(app).listen(app.get('port'), function(){
 	  console.log("Express server listening on port " + app.get('port'));
 	});
-	
+
 	server_started = true
 }
 
@@ -103,9 +104,9 @@ var returnMovies = function(callback){
 	    	var duration = crEl.find(".info .item_description span").text().replace(/["'()\.]/g,"");
 	    	var url = "http://www.imdb.com"+crEl.find(".info b a").attr("href")
 	    	results.push({
-	    		rating: rating, 
-	    		title: title, 
-	    		image: image, 
+	    		rating: rating,
+	    		title: title,
+	    		image: image,
 	    		url: url,
 	    		year: year,
 	    		duration: duration
@@ -154,8 +155,8 @@ var sendMoviesWithScore =  function(chat_id, moviesCollection){
 		if(movie.rating < rating) return
 		request.post(
 	    'https://api.telegram.org/bot180187171:AAEVe8KA1fdah9MY79NgbVgBQfcIdjBoO88/sendMessage',
-		    {form: { 
-		    	chat_id: chat_id, 
+		    {form: {
+		    	chat_id: chat_id,
 		    	text: "<a href=\'"+movie.image+"\'>"+"New release on DVD @imdb"+"</a>\n<b>"+movie.title+" "+movie.year+"</b>\n"+movie.duration+" &#9733;"+movie.rating+" <a href=\'"+movie.url+"\'>"+"IMDB"+"</a>", parse_mode: 'HTML'}},
 		    function (error, response, body) {
 		        if (!error && response.statusCode == 200) {
